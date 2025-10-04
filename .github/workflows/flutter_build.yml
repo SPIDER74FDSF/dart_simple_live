@@ -1,0 +1,36 @@
+
+name: Build SimpleLive Android APK
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 拉取代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ 安装 Flutter 环境
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"  # 指定版本，可改为 stable/latest
+
+      # 3️⃣ 获取依赖
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      # 4️⃣ 构建 release 版 APK
+      - name: Build release APK
+        run: flutter build apk --release
+
+      # 5️⃣ 上传构建产物
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplelive-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
